@@ -97,7 +97,7 @@ export class BookResolver {
         @Arg('input', () => BookIdInput) input: BookIdInput
     ): Promise<Book | undefined> {
         try {
-            const book = await this.bookRepository.findOne(input.id, { relations: ['author'] });
+            const book = await this.bookRepository.findOne(input.id, { relations: ['author', 'author.books'] });
             if (!book) {
                 const error = new Error();
                 error.message = 'Book not found';
