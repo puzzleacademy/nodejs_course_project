@@ -18,7 +18,6 @@ class AuthorInput {
 class AuthorUpdateInput {
 
     @Field(() => Number)
-    @Length(3, 64)
     id!: number
 
     @Field()
@@ -64,7 +63,7 @@ export class AuthorResolver {
         @Arg("input", () => AuthorIdInput) input: AuthorIdInput
     ): Promise<Author | undefined> {
         try {
-            const author = await this.authorRepository.findOne(input.id);
+            const author = await this.authorRepository.findOne(input.id, { relations: ['books'] });
             if (!author) {
                 const error = new Error();
                 error.message = 'Author does not exist';
@@ -99,8 +98,16 @@ export class AuthorResolver {
     async deleteOneAuthor(
         @Arg("input", () => AuthorIdInput) input: AuthorIdInput
     ): Promise<Boolean> {
-        await this.authorRepository.delete(input.id);
+        try {
+            const result = await this.authorRepository.delete(input.id);
+
+            if (result.affected === 0) {
+                throw new Error('Author was not found');
+            }
+
+        } catch (e) {
+            throw new Error(e.message)
+        }
         return true;
     }
-
 }
