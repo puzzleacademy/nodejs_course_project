@@ -98,16 +98,7 @@ export class AuthorResolver {
     async deleteOneAuthor(
         @Arg("input", () => AuthorIdInput) input: AuthorIdInput
     ): Promise<Boolean> {
-        try {
-            const result = await this.authorRepository.delete(input.id);
-
-            if (result.affected === 0) {
-                throw new Error('Author was not found');
-            }
-
-        } catch (e) {
-            throw new Error(e.message)
-        }
+        await this.authorRepository.delete(input.id);
         return true;
     }
 }
