@@ -86,7 +86,7 @@ export class BookResolver {
     @UseMiddleware(isAuth)
     async getAllBooks(): Promise<Book[]> {
         try {
-            return await this.bookRepository.find({ relations: ['author'] })
+            return await this.bookRepository.find({ relations: ['author', 'author.books'] })
         } catch (e) {
             throw new Error(e)
         }
